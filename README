@@ -1,0 +1,3 @@
+Mac用のMikutterプラグインです。必要なgemはruby-growlです。
+Mikutterの通知をnotify-sendからGrowlにするプラグインです。
+とりあえずはメンションだけです。
