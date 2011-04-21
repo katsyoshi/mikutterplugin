@@ -5,11 +5,10 @@ Module.new do
   end
 
   def self.toshi_fav( msg )
-    ary = []
     msg.each do |s|
       user = s.idname 
       if user == "toshi_a"
-        s.favorite(true) unless s.favorite?
+        s.favorite(true) unless s.favorite? && /^RT/ =~ s.to_show 
       end
     end
   end
