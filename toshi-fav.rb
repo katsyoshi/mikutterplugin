@@ -7,9 +7,10 @@ Module.new do
 
   def self.toshi_fav( msg )
     msg.each do |m|
-      if m.user == "toshi_a"
+      user = m.idname
+      if user == "toshi_a"
         # ふぁぼるよ
-        m.favorite(true) unless m.favorite? || m[:retweet]
+        m.favorite(true) unless( m.favorite? || m[:retweet] )
       end
     end
   end
