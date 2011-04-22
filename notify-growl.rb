@@ -7,7 +7,7 @@ Module.new do
   # 取り敢えずメンションがきたら表示するだけ
   plugin.add_event(:mention) do |service, message|
     message.each{ |msg|
-      user = msg.idname 
+      user = msg.user
       g.notify "ruby-growl Notification", str+"Mention from #{user}", msg.to_show
     }
   end
@@ -18,7 +18,7 @@ Module.new do
   #タイムライン更新通知
   plugin.add_event(:update) do |service, message|
     message.each{|msg|
-      # g.notify "ruby-growl Notification", str+msg.idname, msg.to_show 
+      g.notify "ruby-growl Notification", str+msg.user, msg.to_show 
     }
   end
 end
