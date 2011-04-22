@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 Module.new do 
   plugin = Plugin::create(:toshi_fav)
   plugin.add_event(:update) do |service, message|
@@ -5,10 +6,10 @@ Module.new do
   end
 
   def self.toshi_fav( msg )
-    msg.each do |s|
-      user = s.idname 
-      if user == "toshi_a"
-        s.favorite(true) unless s.favorite? && /^RT/ =~ s.to_show 
+    msg.each do |m|
+      if m.user == "toshi_a"
+        # ふぁぼるよ
+        m.favorite(true) unless m.favorite? || m[:retweet]
       end
     end
   end
