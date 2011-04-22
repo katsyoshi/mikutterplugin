@@ -18,7 +18,8 @@ Module.new do
   #タイムライン更新通知
   plugin.add_event(:update) do |service, message|
     message.each{|msg|
-      g.notify "ruby-growl Notification", str+msg.user, msg.to_show 
+      user = msg.idname
+      g.notify "ruby-growl Notification", str+user, msg.to_show 
     }
   end
 end
