@@ -11,7 +11,7 @@ Module.new do
       if user == "toshi_a"
         # ふぁぼるよ
         m.favorite(true) unless( m.favorite? || m[:retweet] )
-        m.retweet(true) unless m[:retweet]
+        m.retweet unless m[:retweet]
       end
     end
   end
