@@ -1,17 +1,36 @@
+# -*- coding: utf-8 -*-
 require 'rbosa'
 require 'nkf'
+require 'thread'
 Module.new do
-  plugin = Plugin.create(:nowlisten)
-  itunes = OSA.app 'iTunes'
-  plugin.add_event(:boot) do |service|
+  def self.boot
+    plugin = Plugin.create(:nowlisten)
+    plugin.add_event(:boot) do |service|
+      Plugin.call(:setting_tab_regist, main, 'iTunes')
+    end
+    plugin.add_event(:boot, &method(:nowplaying))
+  end
+
+  def self.main
+    box = Gtk::VBox.new(false)
+    iTunes = Mtk.group('自動ついーとする？',
+                       Mtk.boolean(:iTunes, '自動ついーと'))
+    box.closeup(iTunes)
+  end
+
+  def self.nowplaying(service)
+    itunes = OSA.app 'iTunes'
     Thread.new do
       previous = nil
       loop do
         sleep(1)
         music = listen( itunes )
         playing = playing?( itunes )
-        service.update(:message => music) if music != previous && playing
-        previous = music if playing
+        # p UserConfig[:iTunes]
+        if music != previous && playing && UserConfig[:iTunes]
+          service.update(:message => music)
+          previous = music
+        end
       end
     end
   end
@@ -28,5 +47,6 @@ Module.new do
     hash_tag = '#nowplaying'
     return ["Listen:", name, artist, album, hash_tag].join(" ")
   end
-  # boot
+
+  boot
 end
