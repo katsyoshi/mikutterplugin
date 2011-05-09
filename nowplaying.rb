@@ -23,14 +23,14 @@ Module.new do
     Thread.new do
       previous = nil
       loop do
-        sleep(1)
-        music = listen( itunes )
-        playing = playing?( itunes )
-        # p UserConfig[:iTunes]
-        if music != previous && playing && UserConfig[:iTunes]
+        music = nil
+        play = playing?(itunes)
+        music = listen( itunes ) if play
+        if music != previous && play && UserConfig[:iTunes]
           service.update(:message => music)
           previous = music
         end
+        sleep(1)
       end
     end
   end
@@ -40,10 +40,10 @@ Module.new do
   end
 
   def self.listen(itunes)
-    music=itunes.current_track
-    name = NKF.nkf '-w', music.name
-    artist = NKF.nkf '-w', music.artist
-    album = NKF.nkf '-w', music.album
+    music    = itunes.current_track
+    name     = NKF.nkf '-w', music.name
+    artist   = NKF.nkf '-w', music.artist
+    album    = NKF.nkf '-w', music.album
     hash_tag = '#nowplaying'
     return ["Listen:", name, artist, album, hash_tag].join(" ")
   end
