@@ -20,6 +20,7 @@ Module.new do
   def self.nowplaying(service)
     OSA.utf8_strings = true
     itunes = OSA.app 'iTunes'
+    itunes.run rescue system 'open -a iTunes'
     Thread.new do
       previous = nil
       loop do
