@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'rbosa'
-require 'nkf'
-require 'thread'
+
 Module.new do
   def self.boot
     plugin = Plugin.create(:nowlisten)
@@ -19,13 +18,14 @@ Module.new do
   end
 
   def self.nowplaying(service)
+    OSA.utf8_strings = true
     itunes = OSA.app 'iTunes'
     Thread.new do
       previous = nil
       loop do
         music = nil
         play = playing?(itunes)
-        music = listen( itunes ) if play
+        music = listen(itunes) if play
         if music != previous && play && UserConfig[:iTunes]
           service.update(:message => music)
           previous = music
@@ -40,10 +40,10 @@ Module.new do
   end
 
   def self.listen(itunes)
-    music    = itunes.current_track
-    name     = NKF.nkf '-w', music.name
-    artist   = NKF.nkf '-w', music.artist
-    album    = NKF.nkf '-w', music.album
+    music = itunes.current_track
+    name = music.name
+    artist = music.artist
+    album = music.album
     hash_tag = '#nowplaying'
     return ["Listen:", name, artist, album, hash_tag].join(" ")
   end
