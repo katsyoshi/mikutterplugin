@@ -18,6 +18,7 @@ Module.new do
   end
 
   def self.nowplaying(service)
+    return nil unless UserConfig[:iTunes]
     OSA.utf8_strings = true
     itunes = OSA.app 'iTunes'
     itunes.run rescue system 'open -a iTunes'
