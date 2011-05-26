@@ -3,7 +3,7 @@ require 'rbosa'
 
 Module.new do
   def self.boot
-    plugin = Plugin.create(:nowlisten)
+    plugin = Plugin.create(:nowplaying)
     plugin.add_event(:boot) do |service|
       Plugin.call(:setting_tab_regist, main, 'iTunes')
     end
@@ -12,8 +12,8 @@ Module.new do
 
   def self.main
     box = Gtk::VBox.new(false)
-    iTunes = Mtk.group('自動ついーとする？',
-                       Mtk.boolean(:iTunes, '自動ついーと'))
+    iTunes = Mtk.group('ついーとする？',
+                       Mtk.boolean(:iTunes, 'じどうついーと'))
     box.closeup(iTunes)
   end
 
