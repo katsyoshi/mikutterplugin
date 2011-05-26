@@ -8,7 +8,6 @@ Module.new do
     plugin.add_event(:update) do |service, message|
       if UserConfig[:fav_users]
         UserConfig[:fav_users].split(',').each do |user|
-          p user.strip
           fav( user.strip, message ) if UserConfig[:auto_fav]
         end
       end
