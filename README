@@ -1,3 +1,11 @@
-Mac用のMikutterプラグインです。必要なgemはruby-growlです。
-Mikutterの通知をnotify-sendからGrowlにするプラグインです。
-とりあえずはメンションだけです。
+Mac用のMikutterプラグインです。
+[nowplaying.rb]
+	iTunesで視聴している曲、Podcast、Videoを自動でツイートします。
+	必要ライブラリ
+		ruby-osa
+		インストール
+				ruby18の場合：gem install rubyosa
+				ruby19の場合：gem install rubyosa19
+
+[fav.rb]
+	TLに流れる任意のユーザのツイートを自動でふぁぼふぁぼします。

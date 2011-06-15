@@ -6,9 +6,11 @@ Module.new do
       Plugin.call(:setting_tab_regist, main, 'ふぁぼ')
     end
     plugin.add_event(:update) do |service, message|
-      if UserConfig[:fav_users]
+      # print UserConfig[:auto_fav],",", UserConfig[:auto_rt], "\n"
+      if UserConfig[:fav_users] && ( UserConfig[:auto_fav] ||
+                                     UserConfig[:auto_rt] )
         UserConfig[:fav_users].split(',').each do |user|
-          fav( user.strip, message ) if UserConfig[:auto_fav]
+          fav( user.strip, message )
         end
       end
     end
@@ -19,9 +21,13 @@ Module.new do
       user = m.idname
       if user == target
         # ふぁぼるよ
-        m.favorite(true) unless( m.favorite? || m[:retweet] )
+        unless( m.favorite? || m[:retweet] )
+          m.favorite(true) if UserConfig[:auto_fav]
+        end
         # リツイートするよ
-        # m.retweet unless m[:retweet]
+        unless m[:retweet]
+          m.retweet if UserConfig[:auto_rt]
+        end
       end
     end
   end
@@ -29,9 +35,10 @@ Module.new do
   def self.main
     box = Gtk::VBox.new(false)
     fav_u = Mtk.group("ふぁぼるよ",
-                      Mtk.input(:fav_users,"ふぁぼるゆーざ"),
-                      Mtk.boolean(:auto_fav, "じどうふぁぼ"))
-    box.closeup(fav_u)
+                      Mtk.input(:fav_users,"ふぁぼるゆーざ"))
+    fav_a = Mtk.boolean(:auto_fav, "じどうふぁぼ")
+    fav_r = Mtk.boolean(:auto_rt, "じどうりついーと")
+    box.closeup(fav_u).closeup(fav_a).closeup(fav_r)
   end
 
   boot
