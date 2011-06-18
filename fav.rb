@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
+# requrie 'date'
 Module.new do
   def self.boot
     plugin = Plugin::create(:fav_timeline)
     plugin.add_event(:boot) do |service|
       Plugin.call(:setting_tab_regist, main, 'ふぁぼ')
+      print "auto_fav\tauto_retweet\tnotify_timeline\ttime\n"
     end
     plugin.add_event(:update) do |service, message|
-      # print UserConfig[:auto_fav],",", UserConfig[:auto_rt], "\n"
+      print UserConfig[:auto_fav],"\t\t", UserConfig[:auto_rt], "\t\t",
+      UserConfig[:notify_friend_timeline], "\t\t", Time.now, "\n"
       if UserConfig[:fav_users] && ( UserConfig[:auto_fav] ||
                                      UserConfig[:auto_rt] )
         UserConfig[:fav_users].split(',').each do |user|
@@ -35,10 +38,13 @@ Module.new do
   def self.main
     box = Gtk::VBox.new(false)
     fav_u = Mtk.group("ふぁぼるよ",
-                      Mtk.input(:fav_users,"ふぁぼるゆーざ"))
-    fav_a = Mtk.boolean(:auto_fav, "じどうふぁぼ")
-    fav_r = Mtk.boolean(:auto_rt, "じどうりついーと")
-    box.closeup(fav_u).closeup(fav_a).closeup(fav_r)
+                      Mtk.boolean(:auto_fav, "じどうふぁぼ"),
+                      Mtk.boolean(:auto_rt, "じどうりついーと"),
+                      Mtk.input(:fav_users,"ふぁぼるゆーざ")
+                      )
+    # fav_a = Mtk.boolean(:auto_fav, "じどうふぁぼ")
+    # fav_r = Mtk.boolean(:auto_rt, "じどうりついーと")
+    box.closeup(fav_u)
   end
 
   boot
