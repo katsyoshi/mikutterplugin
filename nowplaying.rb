@@ -2,40 +2,38 @@
 require 'rbosa'
 
 Module.new do
-  def self.boot
-    plugin = Plugin.create(:nowplaying)
-    plugin.add_event(:boot) do |service|
-      Plugin.call(:setting_tab_regist, main, 'iTunes')
-    end
-    plugin.add_event(:boot, &method(:nowplaying))
-  end
-
-  def self.main
-    box = Gtk::VBox.new(false)
-    iTunes = Mtk.group('ついーとする？',
-                       Mtk.boolean(:iTunes, 'じどうついーと'))
-    box.closeup(iTunes)
-  end
-
-  def self.nowplaying(service)
-    return nil unless UserConfig[:iTunes]
-    OSA.utf8_strings = true
-    itunes = OSA.app 'iTunes'
-    itunes.run rescue system 'open -a iTunes'
-    Thread.new do
-      previous = nil
-      loop do
-        music = nil
-        play = playing?(itunes)
-        music = listen(itunes) if play
-        if music != previous && play && UserConfig[:iTunes]
-          service.update(:message => music)
-          previous = music
-        end
-        sleep(1)
-      end
+  class << self
+    def define_command(slug, args)
+      type_strict args => Hash
+      args[:slug] = slug.to_sym
+      args.freeze
+      Plugin.create(:nowplaying).add_event_filter(:command){|menu|
+        menu[slug] = args
+        [menu]
+      }
     end
   end
+
+  def self.exec_player? itunes
+    itunes.run
+  rescue
+    system 'open -a iTunes'
+  end
+
+  OSA.utf8_strings = true
+  itunes = OSA.app 'iTunes'
+  exec_player? itunes
+
+  define_command(:playing,
+                 :name => itunes.current_track.name,
+                 :condition => lambda do |m|
+                   m.post.editable? end,
+                 :exec => lambda do |m|
+                   p m.active
+                 end,
+                 :visible => true,
+                 :role => :postbox)
+                 # def self.nowplaying(service)
 
   def self.playing?(itunes)
     itunes.player_state == OSA::ITunes::EPLS::PLAYING
@@ -50,5 +48,4 @@ Module.new do
     return ["Listen:", name, artist, album, hash_tag].join(" ")
   end
 
-  boot
 end
