@@ -1,0 +1,21 @@
+Index: core/addon/alsa/alsa.rb
+===================================================================
+--- core/addon/alsa/alsa.rb	(revision 556)
++++ core/addon/alsa/alsa.rb	(working copy)
+@@ -3,10 +3,14 @@
+ 
+ Module.new do
+ 
+-  if command_exist? "aplay"
++  if command_exist?("aplay") || command_exist?("afplay")
+     Plugin::create(:alsa).add_event(:play_sound){ |filename, &stop|
+       SerialThread.new {
+-        bg_system("aplay","-q", filename) if FileTest.exist?(filename) }
++        if FileTest.exist?(filename)
++          bg_system("aplay","-q", filename) if command_exist? "aplay"
++          bg_system("afplay", filename) if  command_exist? "afplay"
++        end
++      }
+       stop.call } end
+ 
+ end
